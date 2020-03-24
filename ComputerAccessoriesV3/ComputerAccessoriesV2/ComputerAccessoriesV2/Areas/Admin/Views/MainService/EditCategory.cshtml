@@ -1,0 +1,184 @@
+﻿@using ComputerAccessoriesV2.Extensions
+@model ComputerAccessoriesV2.ViewModels.CategoryViewModel
+@using ComputerAccessoriesV2.Models
+@{
+    ViewData["Title"] = "EditCategory";
+    Layout = "~/Views/Admin/_Layout.cshtml";
+    List<Category> categories = new List<Category>();
+    categories = ViewBag.lstCategory;
+}
+<br />
+
+<br />
+<div class="box box-primary">
+    <div class="box-header with-border">
+        <div class="col-lg-8">
+            <h3 class="box-title">Thêm danh mục sản phẩm</h3>
+        </div>
+        <div class="col-lg-4">
+            <span id="notify"></span>
+        </div>
+
+    </div>
+    <!-- /.box-header -->
+    <!-- form start -->
+    <br />
+    <div class="row">
+        <div class="col-lg-12" style="text-align:center">
+            <div class="box-body">
+                <input hidden id="CategoryId" value="@Model.Id" />
+                <div class="form-group row">
+                    <div class="col-lg-4 text-right">
+                        <label for="exampleInputEmail1">Tên danh mục</label>
+                    </div>
+                    <div class="col-lg-6">
+                        <input class="form-control" placeholder="Nhập tên danh mục" id="CategoryName" value="@Model.CategoryName">
+                    </div>
+
+                </div>
+                <div class="form-group row">
+                    <div class="col-lg-4 text-right">
+                        <label for="exampleInputEmail1">Danh mục cha</label>
+                    </div>
+                    <div class="col-lg-6">
+                        <input id="ParentId" class="form-control" />
+                    </div>
+
+                </div>
+                @if (Model.Status)
+                {
+                    <div class="form-group row">
+                        <div class="col-lg-4 text-right">
+                            <label>Active</label>
+                        </div>
+                        <div class="col-lg-6 text-left">
+                            <input type="checkbox" id="Status" checked />
+                        </div>
+
+                    </div>
+                }
+                else
+                {
+                    <div class="form-group row">
+                        <div class="col-lg-4 text-right">
+                            <label>Active</label>
+                        </div>
+                        <div class="col-lg-6 text-left">
+                            <input type="checkbox" id="Status" />
+                        </div>
+
+                    </div>
+                }
+
+
+            </div>
+        </div>
+        <div class="col-lg-12 text-right">
+            <div class="col-lg-4">
+
+            </div>
+            <div class="col-lg-6">
+                <div class="box-footer">
+                    <button id="updateCategory" class="btn btn-primary">Cập nhật</button>
+                    <a class="btn btn-warning" asp-area="Admin" asp-controller="MainService" asp-action="Catgory">Quay lại</a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- /.box-body -->
+
+
+</div>
+
+
+@section Scripts{
+    <script>
+        var notification;
+        $(document).ready(() => {
+            var value = "@Model.ParentCateId";
+            $('#ParentId').kendoDropDownList({
+                optionLabel: '-Chọn danh mục-',
+                dataTextField: "categoryName",
+                dataValueField: "id",
+                dataSource: {
+                    type: 'json',
+                    serverFiltering: true,
+                    transport: {
+                        read: {
+                            url: window.location.protocol + '//' + window.location.host+"/MainService/GetCategories"
+                        },
+                        requestEnd: function (e) {
+                                var response = e.response;
+                                var type = e.type;
+                                //console.log(type); // displays "read"
+                                if (response.length === 0) {
+                                    //console.log(response); // displays "read"
+                                }
+                        },
+                    }
+                },
+                index: 0
+            });
+            $('#ParentId').data('kendoDropDownList').value(value);
+            notification = $("#notify").kendoNotification({
+                position: {
+                    top:170
+                },
+                templates: [{
+                    type: "warning",
+                    template: "<div class='text-danger'><text style='font-size:14px'>#= content #</text></div>"
+                }, {
+                    type: "success",
+                    template: "<div class='text-success'><text style='font-size:14px'>#= content #</text></div>"
+                    }]
+            }).data("kendoNotification");
+        });
+        function GetMessageAlert(msg) {
+            return {
+                content: msg
+            }
+        }
+        $('#updateCategory').click(() => {
+            debugger;
+            var categoryId = $('#CategoryId').val();
+            var categoryName = $('#CategoryName').val();
+            var parentId = $('#ParentId').data('kendoDropDownList').value();
+            var isActive = $('#Status').is(":checked");
+            if (categoryName == "") {
+                notification.show(GetMessageAlert("Vui lòng nhập tên danh mục"), "warning");
+                return;
+            }
+            var data = {
+                Id: categoryId,
+                CategoryName: categoryName,
+                ParendId: parentId,
+                Status: isActive
+            }
+
+            $.ajax({
+                url: "/MainService/UpdateCategory",
+                type: "post",
+                dataType: "json",
+                data: data,
+                success: function (result) {
+                    if (result.code == 1) {
+                        notification.show("Cập nhật thành công", "success");
+                        setTimeout(window.HelperSDK.Helpers.Redirect(result.url), 5000);
+                    } else {
+                        notification.show(result.err, "warning");
+                    }
+
+                },
+                error: function (err) {
+                    notification.show(GetMessageAlert(err), "warning");
+                }
+            });
+        });
+    </script>
+}
+<!-- /.box-body -->
+</div>
+

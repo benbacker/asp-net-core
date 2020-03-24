@@ -1,0 +1,406 @@
+﻿@model ComputerAccessoriesV2.ViewModels.ProductGridModel
+@using ComputerAccessoriesV2.ViewModels
+@{
+    ViewData["Title"] = "Chi tiết sản phẩm " + ViewBag.productName;
+    Layout = "~/Views/Home/_HomeLayout.cshtml";
+
+    var relatedProduct = ViewBag.relatedProduct as List<ProductGridModel>;
+    List<ProductGridModel> listDeals = ViewBag.ListDeal as List<ProductGridModel>;
+    var listTags = ViewBag.ListTags as List<CategoryShoppingModel>;
+}
+
+
+<title>Chi tiết sản phẩm @ViewBag.productName</title>
+
+<br />
+<div class="product-details-wrapper">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-9">
+                <!-- product details inner end -->
+                <div class="product-details-inner">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="product-large-slider mb-20 slick-arrow-style_2">
+                                @foreach (var item in Model.ProductImages)
+                                {
+                                    <div class="pro-large-img img-zoom" id="img1">
+                                        <img src="@item.ImageUrl" alt="" />
+                                    </div>
+                                }
+
+
+                            </div>
+                            <div class="pro-nav slick-padding2 slick-arrow-style_2">
+                                @foreach (var item in Model.ProductImages)
+                                {
+                                    <div class="pro-nav-thumb"><img src="@item.ImageUrl" alt="" /></div>
+                                }
+
+
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="product-details-des mt-md-34 mt-sm-34">
+                                <h3><a asp-action="ProductDetails" asp-route-productId="@Model.Id">@Model.ProductName</a></h3>
+                                <div class="ratings">
+                                    @for (int i = 1; i <= Model.ReviewStarPoint; i++)
+                                    {
+                                        <span class="good"><i class="fa fa-star"></i></span>
+                                    }
+                                    <div class="pro-review">
+                                        <span>@Model.ReviewCount lượt đánh giá</span>
+                                    </div>
+                                </div>
+                                <div class="customer-rev">
+                                    <a>(@Model.ViewCounts lượt xem)</a>
+                                </div>
+                                <div class="availability mt-10">
+                                    <h5>Số lượng còn lại:</h5>
+                                    <span>@Model.Quantity sản phẩm</span>
+                                </div>
+                                <div class="pricebox">
+                                    @if (String.IsNullOrEmpty(Model.PromotionPrice))
+                                    {
+                                        <span class="regular-price">đ @Model.OriginalPrice</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="regular-price">đ @Model.PromotionPrice</span>
+                                        <span class="old-price"><del>@Model.OriginalPrice</del></span>
+                                    }
+                                </div>
+                                <p>
+                                    @Model.ShorDescription
+                                </p>
+                                <div class="quantity-cart-box d-flex align-items-center">
+                                    <div class="quantity">
+                                        <div class="pro-qty"><input type="text" value="1" id="prodQuantity"></div>
+                                    </div>
+                                    <input hidden id="prodId" value="@Model.Id" />
+                                    <div class="action_link">
+                                        <a id="btnAddToCart" class="buy-btn" href="javascript:void(0)">
+                                            <span id="loadingAddToCart"></span><span>Thêm vào giỏ</span><i id="iconAddToCart" class="fa fa-shopping-cart"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                                
+                                <div class="share-icon mt-20">
+                                    <a class="facebook" href="#"><i class="fa fa-facebook"></i>like</a>
+                                    <a class="twitter" href="#"><i class="fa fa-twitter"></i>tweet</a>
+                                    <a class="pinterest" href="#"><i class="fa fa-pinterest"></i>save</a>
+                                    <a class="google" href="#"><i class="fa fa-google-plus"></i>share</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- product details inner end -->
+                <!-- product details reviews start -->
+                <div class="product-details-reviews mt-34">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="product-review-info">
+                                <ul class="nav review-tab">
+                                    <li>
+                                        <a class="active" data-toggle="tab" href="#tab_one">Thông tin</a>
+                                    </li>
+                                    <li>
+                                        <a data-toggle="tab" href="#tab_two">Thuộc tính</a>
+                                    </li>
+                                    <li>
+                                        <a onclick="LoadReview(@Model.Id)" data-toggle="tab" href="#tab_three">Đánh giá</a>
+                                    </li>
+                                </ul>
+                                <div class="tab-content reviews-tab">
+                                    <div class="tab-pane fade show active" id="tab_one">
+                                        <div class="tab-one" style="overflow: hidden; height: 400px" id="content_tab_one">
+                                            @Html.Raw(Model.FullDescription)
+                                        </div>
+                                        <div class="text-center">
+                                            <button class="btn btn-outline-primary" id="showMore" style="color: blue; border: none;background:transparent">Hiển thị thêm</button>
+                                            <button class="btn btn-outline-primary" id="showLess" style="color: blue; border: none; background: transparent;display:none">Ẩn đi</button>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="tab-pane fade" id="tab_two">
+                                        Select thuộc tính bỏ vào đây
+                                        <table class="table table-bordered">
+                                            <tbody>
+                                                @foreach (var item in Model.ProductAttributes)
+                                                {
+                                                    <tr>
+                                                        <td>@item.Attribute.AttributeName</td>
+                                                        <td>@item.Value</td>
+                                                    </tr>
+                                                }
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="tab-pane fade" id="tab_three">
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- product details reviews end -->
+                <!-- related products area start -->
+                <partial name="RelatedProducts" model="relatedProduct" />
+                <!-- related products area end -->
+            </div>
+            <div class="col-lg-3">
+                <div class="shop-sidebar-wrap fix mt-md-22 mt-sm-22">
+                    <!-- featured category start -->
+                    <div class="sidebar-widget mb-22">
+                        <div class="section-title-2 d-flex justify-content-between mb-28">
+                            <h3>Sản phẩm mới</h3>
+                            <div class="category-append"></div>
+                        </div> <!-- section title end -->
+                        <div class="category-carousel-active row" data-row="3">
+                            @if (listDeals.Count > 0)
+                            {
+                                @foreach (var item in listDeals)
+                                {
+                                    <div class="col">
+                                        <div class="category-item">
+                                            <div class="category-thumb">
+                                                <a asp-controller="ProductHome" asp-action="ProductDetails" asp-route-productId="@item.Id">
+                                                    <img src="@item.Thumnail" alt="">
+                                                </a>
+                                            </div>
+                                            <div class="category-content">
+                                                <h4><a asp-controller="ProductHome" asp-action="ProductDetails" asp-route-productId="@item.Id">@item.ProductName</a></h4>
+                                                <div class="price-box">
+                                                    @if (String.IsNullOrEmpty(item.PromotionPrice))
+                                                    {
+                                                        <div class="regular-price">
+                                                            đ @item.OriginalPrice
+                                                        </div>
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="regular-price">
+                                                            đ @item.PromotionPrice
+                                                        </div>
+                                                        <div class="old-price">
+                                                            <del style="font-size:12px">@item.OriginalPrice</del>
+                                                        </div>
+                                                    }
+                                                </div>
+                                                <div class="ratings">
+                                                    @for (int i = 1; i <= item.ReviewStarPoint; i++)
+                                                    {
+                                                        <span class="good"><i class="fa fa-star"></i></span>
+
+                                                    }
+                                                    <div class="pro-review">
+                                                        <span>@item.ReviewCount đánh giá</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div> <!-- end single item -->
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+
+                    <div class="sidebar-widget mb-22">
+                        <div class="sidebar-title mb-10">
+                            <h3>Hãng nổi bật</h3>
+                        </div>
+                        <div class="sidebar-widget-body">
+                            <partial name="~/Areas/Customer/Views/Shopping/_BrandLeftNavPartial.cshtml" model="ViewBag.brandList" />
+                        </div>
+                    </div>
+                    <!-- manufacturer end -->
+                    <!-- product tag start -->
+                    <div class="sidebar-widget mb-22">
+                        <div class="sidebar-title mb-20">
+                            <h3>tag</h3>
+                        </div>
+                        <div class="sidebar-widget-body">
+                            <div class="product-tag">
+                                @foreach (var item in listTags)
+                                {
+                                    <a asp-action="ProductListFilter" asp-controller="Shopping" asp-route-categoryId="@item.Id">@item.CategoryName</a>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <!-- product tag end -->
+                    <!-- sidebar banner start -->
+                    @*<div class="sidebar-widget mb-22">
+                        <div class="img-container fix img-full mt-30">
+                            <a href="#"><img src="~/assets/img/banner/banner_shop.jpg" alt=""></a>
+                        </div>
+                    </div>*@
+                    <!-- sidebar banner end -->
+                </div>
+            </div>
+            <!-- sidebar end -->
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="quick_view">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+
+                <div class="product-details-inner">
+                    <div class="row">
+                        <div class="col-lg-5">
+                            <div class="product-large-slider slick-arrow-style_2 mb-20" id="slider_imgs">
+
+                            </div>
+                            <div class="pro-nav slick-padding2 slick-arrow-style_2" id="slider_thumnails">
+
+                            </div>
+                        </div>
+                        <div class="col-lg-7">
+                            <div class="product-details-des mt-md-34 mt-sm-34">
+                                <h3><a href="#" id="product_name" title="Xem chi tiết"></a></h3>
+                                <div class="ratings">
+                                    <span class="good"><i class="fa fa-star"></i></span>
+                                    <span class="good"><i class="fa fa-star"></i></span>
+                                    <span class="good"><i class="fa fa-star"></i></span>
+                                    <span class="good"><i class="fa fa-star"></i></span>
+                                    <span><i class="fa fa-star"></i></span>
+                                    <div class="pro-review">
+                                        <span>1 review(s)</span>
+                                    </div>
+                                </div>
+                                <div class="availability mt-10">
+                                    <h5>Còn lại:</h5>
+                                    <span id="quantity"></span>
+                                </div>
+                                <div class="pricebox">
+                                    <span class="regular-price" id="price">$160.00</span>
+                                </div>
+                                <p id="short_description">
+
+                                </p>
+                                <div class="quantity-cart-box d-flex align-items-center mt-20">
+                                    <div class="quantity">
+                                        <div class="pro-qty" ><input type="text" value="1" id="productQuantity"></div>
+                                    </div>
+                                    <input hidden id="productId" />
+                                    <div class="action_link">
+                                        <a class="buy-btn" href="javascript:void(0)" id="btnAddToCartModal">
+                                            Thêm vào giỏ<i class="fa fa-shopping-cart"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section Scripts{
+
+    <script>
+
+        //$(document).ready(() => {
+        //    $('#more').hide();
+        //});
+
+        var html = "";
+        function QuickView(id) {
+            var slider_imgs = $('#slider_imgs');
+            var slider_thumnails = $('#slider_thumnails');
+
+
+            RemoveAllSlick(slider_imgs);
+            RemoveAllSlick(slider_thumnails)
+
+            debugger;
+            $.ajax({
+                url: "/Home/QuickView?id=" + id,
+                type: "get",
+                dataType: "json",
+                success: function (data) {
+                    var slider_large = "";
+                    var slider_small = "";
+                    for (var i = 0; i < data.productImages.length; i++) {
+
+                        //slider_large += "<div class='pro-large-img'><img src='" + data.productImages[i].imageUrl + "' alt='' /></div>";
+
+                        slider_imgs.slick('slickAdd', "<div class='pro-large-img'><img src='" + data.productImages[i].imageUrl + "' alt='' /></div>");
+                        slider_thumnails.slick('slickAdd', "<div class='pro-nav-thumb'><img src='" + data.productImages[i].imageUrl + "'alt='' /></div>");
+
+                    }
+                    $("#productId").attr("value", id);
+                    $('#quantity').text(data.quantity);
+                    $('#short_description').text(data.shorDescription);
+                    $('#price').text(data.originalPrice);
+                    $('#product_name').text(data.productName);
+                    $('#product_name').attr('href', "/Customer/ProductHome/ProductDetails?productId=" + data.id);
+                    //slider_imgs.append(slider_large);
+                    //slider_thumnails.append(slider_small);
+                    $('#quick_view').modal('show');
+                }
+            });
+
+
+
+        }
+
+        function RemoveAllSlick(selector) {
+            debugger;
+            var sl = selector;
+            console.log(sl);
+            var totalSlides = selector.slick('getSlick').slideCount;
+
+            while (totalSlides !== 0) {
+                selector.slick('slickRemove', totalSlides - 1);
+                totalSlides--;
+            }
+            return true;
+        }
+
+        $('#showMore').click(function () {
+            //$('#more').slideToggle();
+            $('#showMore').hide();
+            $('#showLess').show();
+            $('#content_tab_one').css('height', '');
+        });
+        $('#showLess').click(function () {
+            $('#more').slideToggle();
+            $('#showMore').show();
+            $('#showLess').hide();
+            $('#content_tab_one').css('height', '400px');
+        });
+
+        function LoadReview(productId) {
+            $.get("/Customer/ProductHome/ProductReview?productId=" + productId, function (view) {
+                $("#tab_three").empty();
+                $("#tab_three").html(view);
+            })
+        }
+        $('#btnAddToCart').click(function () {
+            var productId = $('#prodId').val();
+            var quantity = $('#prodQuantity').val();
+            AddToCart(productId, quantity);
+        })
+        $('#btnAddToCartModal').click(function () {
+            var productId = $('#productId').val();
+            var quantity = $('#productQuantity').val();
+            AddToCart(productId, quantity);
+        })
+    </script>
+
+}

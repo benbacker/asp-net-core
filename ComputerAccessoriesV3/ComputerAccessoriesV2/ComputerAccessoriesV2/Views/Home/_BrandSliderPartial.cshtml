@@ -1,0 +1,34 @@
+﻿
+@model List<ComputerAccessoriesV2.Models.Brand>
+
+<div class="brand-area pt-28 pb-30">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="section-title mb-30">
+                    <div class="title-icon">
+                        <i class="fa fa-crop"></i>
+                    </div>
+                    <h3>Popular Brand</h3>
+                </div> <!-- section title end -->
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="brand-active slick-padding slick-arrow-style">
+                    @if (Model != null && Model.Count > 0)
+                    {
+                        @foreach (var item in Model)
+                        {
+                            <div class="brand-item text-center">
+                                <a asp-controller="Shopping" asp-action="ProductListFilter" asp-route-brandId="@item.Id"><img src="@item.Logo" alt=""></a>
+                            </div>
+                        }
+                    }
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

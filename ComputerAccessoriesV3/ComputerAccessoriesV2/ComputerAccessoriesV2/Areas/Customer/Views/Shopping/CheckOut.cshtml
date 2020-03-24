@@ -1,0 +1,599 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using ComputerAccessoriesV2.Data
+@{
+    ViewData["Title"] = "CheckOut";
+    Layout = "~/Views/Home/_HomeLayout.cshtml";
+}
+
+@inject SignInManager<ComputerAccessoriesV2.Data.MyUsers> SignInManager
+@inject UserManager<ComputerAccessoriesV2.Data.MyUsers> UserManager
+@{
+    MyUsers myUsers = null;
+    if (SignInManager.IsSignedIn(User))
+    {
+        myUsers = await UserManager.GetUserAsync(User);
+    }
+    var isLogin = myUsers == null ? 0 : 1;
+}
+    
+
+
+<title>Đặt hàng</title>
+
+<div class="breadcrumb-area">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="breadcrumb-wrap">
+                    <nav aria-label="breadcrumb">
+                        <ul class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="/Customer/Home/Index">Home</a></li>
+                            <li class="breadcrumb-item"><a asp-action="ProductListFilter" asp-controller="Shopping">shop</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">checkout</li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="checkout-page-wrapper">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <!-- Checkout Login Coupon Accordion Start -->
+
+                <div class="checkoutaccordion" id="checkOutAccordion">
+                    @if (!SignInManager.IsSignedIn(User))
+                    {
+                        <div class="card">
+                            <h3>Returning Customer? <span data-toggle="collapse" data-target="#logInaccordion">Click Here To Login</span></h3>
+
+                            <div id="logInaccordion" class="collapse" data-parent="#checkOutAccordion">
+                                <div class="card-body">
+                                    <p>If you have shopped with us before, please enter your details in the boxes below. If you are a new customer, please proceed to the Billing &amp; Shipping section.</p>
+                                    <div class="login-reg-form-wrap mt-20">
+                                        <div class="row">
+                                            <div class="col-lg-7 m-auto">
+                                                <form action="#" method="post">
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <div class="single-input-item">
+                                                                <input type="email" placeholder="Nhập email của ban" required />
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-md-12">
+                                                            <div class="single-input-item">
+                                                                <input type="password" placeholder="Nhập mật khẩu" required />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="single-input-item">
+                                                        <div class="login-reg-form-meta d-flex align-items-center justify-content-between">
+                                                            <div class="remember-meta">
+                                                                <div class="custom-control custom-checkbox">
+                                                                    <input type="checkbox" class="custom-control-input" id="rememberMe" required />
+                                                                    <label class="custom-control-label" for="rememberMe">Remember Me</label>
+                                                                </div>
+                                                            </div>
+
+                                                            <a href="#" class="forget-pwd">Forget Password?</a>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="single-input-item">
+                                                        <button class="check-btn sqr-btn">Login</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+
+                </div>
+
+                <!-- Checkout Login Coupon Accordion End -->
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Checkout Billing Details -->
+            <div class="col-lg-6">
+                <div class="checkout-billing-details-wrap">
+                    <h2>Billing Details</h2>
+                    <div class="billing-form-wrap">
+                        @if (SignInManager.IsSignedIn(User))
+                        {
+                            <partial name="_UserBillinInformation" model="ViewBag.UserInfo" />
+                            <div class="checkout-box-wrap">
+                                <div class="single-input-item">
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input" id="ship_to_different">
+                                        <label class="custom-control-label" for="ship_to_different">Chuyển đến một địa chỉ khác?</label>
+                                    </div>
+                                </div>
+                                <div class="ship-to-different single-form-row">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="single-input-item">
+                                                <label for="f_name" class="required">Họ, tên đệm</label>
+                                                <input type="text" id="f_name" placeholder="Họ, tên đệm" required />
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <div class="single-input-item">
+                                                <label for="l_name" class="required">Tên</label>
+                                                <input type="text" id="l_name" placeholder="Tên" required />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="single-input-item">
+                                        <label for="email" class="required">Địa chỉ Email</label>
+                                        <input type="email" id="email" placeholder="Địa chỉ Email" required />
+                                    </div>
+
+                                    <div class="single-input-item">
+                                        <label for="phone">Phone</label>
+                                        <input type="text" id="phone" placeholder="Phone" />
+                                    </div>
+
+                                    <div class="single-input-item">
+                                        <label for="province" class="required">Tỉnh, Thành phố</label>
+                                        <input id="province" name="country nice-select" />
+
+                                    </div>
+
+
+                                    <div class="single-input-item">
+                                        <label for="district" class="required">Quận, Huyện</label>
+                                        <input type="text" id="district" placeholder="Quận, Huyện" required />
+                                    </div>
+
+                                    <div class="single-input-item">
+                                        <label for="ward">Xã,Phường</label>
+                                        <input type="text" id="ward" placeholder="Xã, Phường" />
+                                    </div>
+
+                                    <div class="single-input-item">
+                                        <label for="placedetail" class="required pt-20">Số nhà</label>
+                                        <input type="text" id="placedetail" placeholder="Số nhà" required />
+                                    </div>
+                                    <div class="single-input-item">
+                                        <label for="ordernote">Ghi chu</label>
+                                        <textarea name="ordernote" id="ordernote" cols="30" rows="3" placeholder="Ghi chú cho đơn hàng của bạn"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="checkout-box-wrap">
+                                @*<div class="single-input-item">
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input" id="ship_to_different">
+                                        <label class="custom-control-label" for="ship_to_different">Chuyển đến một địa chỉ khác?</label>
+                                    </div>
+                                </div>*@
+                                <div class="ship-to-different single-form-row">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="single-input-item">
+                                                <label for="f_name" class="required">Họ, tên đệm</label>
+                                                <input type="text" id="f_name" name="fname" placeholder="Họ, tên đệm" required />
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <div class="single-input-item">
+                                                <label for="l_name" class="required">Tên</label>
+                                                <input type="text" id="l_name" name="lname" placeholder="Tên" required />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="single-input-item">
+                                        <label for="email" class="required">Địa chỉ Email</label>
+                                        <input type="email" id="email" name="email" placeholder="Địa chỉ Email" required />
+                                    </div>
+
+                                    <div class="single-input-item">
+                                        <label for="phone">Phone</label>
+                                        <input type="text" id="phone" name="phone" placeholder="Phone" />
+                                    </div>
+
+                                    <div class="single-input-item">
+                                        <label for="province" class="required">Tỉnh, Thành phố</label>
+                                        <input id="province" name="province" />
+
+                                    </div>
+
+
+                                    <div class="single-input-item">
+                                        <label for="district" class="required">Quận, Huyện</label>
+                                        <input type="text" id="district" name="district" placeholder="Quận, Huyện" required />
+                                    </div>
+
+                                    <div class="single-input-item">
+                                        <label for="ward">Xã,Phường</label>
+                                        <input type="text" id="ward" name="ward" placeholder="Xã, Phường" />
+                                    </div>
+
+                                    <div class="single-input-item">
+                                        <label for="placedetail" class="required pt-20">Số nhà</label>
+                                        <input type="text" id="placedetail" name="placedetail" placeholder="Số nhà" required />
+                                    </div>
+                                    <div class="single-input-item">
+                                        <label for="ordernote">Ghi chú</label>
+                                        <textarea name="ordernote" id="ordernote" cols="30" rows="3" placeholder="Ghi chú cho đơn hàng của bạn"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Summary Details -->
+            <div class="col-lg-6">
+                <partial name="_OrderSummary" model="@ViewBag.listProduct" />
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="~/js/HelperSDK.js"></script> 
+    <script>
+        var notification = null;
+        var heplers = null;
+        $(window).on('load', () => {
+            notification = $('#kendoNoti').data('kendoNotification');
+
+            heplers=window.HelperSDK.Helpers;
+            debugger;
+
+            var check = "@isLogin";
+            if (check !== "1") {
+                $(".ship-to-different").slideToggle("100");
+            }
+            
+            $('#province').kendoDropDownList({
+                optionLabel: '-Chọn tỉnh-',
+                dataTextField: "provinceName",
+                dataValueField: "provinceId",
+                autoBind: true,
+                dataSource: {
+                    type: 'json',
+                    serverFiltering: true,
+                    transport: {
+                        read: {
+                            url: window.location.protocol + '//' + window.location.host + "/Region/GetProvinces"
+                        },
+                        requestEnd: function (e) {
+                            var response = e.response;
+                            var type = e.type;
+                            //console.log(type); // displays "read"
+                            if (response.length === 0) {
+                                //console.log(response); // displays "read"
+                            }
+                        },
+                    }
+                },
+                index: 0,
+                change: onDataBoundDistricts
+            });
+            $('#district').kendoDropDownList({
+                optionLabel: '-Chọn quận huyện-',
+                dataTextField: "districtName",
+                dataValueField: "districtId",
+
+
+                index: 0
+            });
+
+            $('#ward').kendoDropDownList({
+                optionLabel: '-Chọn quận huyện-',
+                dataTextField: "wardName",
+                dataValueField: "wardId",
+                index: 0
+            });
+            $("#province").closest('.k-dropdown').addClass('form-control');
+            $("#district").closest('.k-dropdown').addClass('form-control');
+            $("#ward").closest('.k-dropdown').addClass('form-control');
+        });
+        function onDataBoundDistricts() {
+            var provinceId = $('#province').data('kendoDropDownList').value();
+            $('#district').kendoDropDownList({
+                optionLabel: '-Chọn quận huyện-',
+                dataTextField: "districtName",
+                dataValueField: "districtId",
+                dataSource: {
+                    type: 'json',
+                    serverFiltering: true,
+                    transport: {
+                        read: {
+                            url: window.location.protocol + '//' + window.location.host + "/Region/GetDistricts?provinceId=" + provinceId
+                        },
+                        requestEnd: function (e) {
+                            var response = e.response;
+                            var type = e.type;
+                            //console.log(type); // displays "read"
+                            if (response.length === 0) {
+                                //console.log(response); // displays "read"
+                            }
+                        },
+                    }
+                },
+                index: 0,
+                change: onDataBoundWard
+            });
+        }
+
+        function onDataBoundWard() {
+            debugger;
+            var districtId = $('#district').data('kendoDropDownList').value();
+            $('#ward').kendoDropDownList({
+                optionLabel: '-Chọn xã,phường-',
+                dataTextField: "wardName",
+                dataValueField: "wardId",
+
+                dataSource: {
+                    type: 'json',
+                    serverFiltering: true,
+                    transport: {
+                        read: {
+                            url: window.location.protocol + '//' + window.location.host + "/Region/GetWards?districtId=" + districtId
+                        },
+                        requestEnd: function (e) {
+                            var response = e.response;
+                            var type = e.type;
+                            //console.log(type); // displays "read"
+                            if (response.length === 0) {
+                                //console.log(response); // displays "read"
+                            }
+                        },
+                    }
+                },
+                index: 0
+            });
+        }
+
+        function AddToBill() {
+            var btn = $('#placeOrder');
+            debugger;
+
+            var html = "<span id='spinner' class='lds-dual-ring'></span>  Đang xử lý"
+            btn.html(html);
+            var check = "@isLogin";
+            if (check == 1) {
+                 
+                var cbOtherAddress = $('#ship_to_different').is(":checked");
+                if (cbOtherAddress) {
+                    if (!formValidation()) {
+                        btn.text("Tiến hành đặt hàng");
+                return;
+                    };
+                    var p = $('#phone').val();
+            var vnf_regex = /((0|84)+([0-9]{9})\b)/g;
+
+                    if (!vnf_regex.test(p)) {
+                        notification.show({ title: "Thông báo", message: "Số điện thoại không đúng định dạng" }, "error");
+                        btn.text("Tiến hành đặt hàng");
+                        return;
+                    }
+
+                    var userid = $('#userId');
+                    var firstName = $('#f_name');
+                    var lname = $("#l_name");
+                    var email = $('#email');
+                    var phone = $('#phone');
+                    var province = $('#province').data('kendoDropDownList');
+                    var district = $('#district').data('kendoDropDownList');
+                    var ward = $('#ward').data('kendoDropDownList');
+                    var placedetail = $('#placedetail');
+                    var ordernote = $('#ordernote');
+                    var voucher = $('#voucher');
+
+                    var data = {
+                        UserId: userid.val(),
+                        Name: firstName.val() + " " + lname.val(),
+                        Email: email.val(),
+                        PhoneNumber: phone.val(),
+                        ProvinceId: province.value(),
+                        DistrictId: district.value(),
+                        Ward: ward.value(),
+                        PlaceDetail: placedetail.val(),
+                        Note: ordernote.val(),
+                        voucher: voucher.val()
+                    }
+                    btn.attr("disabled", true);
+                    btn.addClass("not-active");
+                    $.ajax({
+                        url: "/Shopping/AddToBillWithNoLogin",
+                        type: "post",
+                        dataType: "json",
+                        async: true,
+                        data: data,
+                        success: function (result) {
+                            if (result.code === 1) {
+                                notification.show({ title: "Thông báo", message: "Đơn hàng :" + result.billCode + " đã được ghi nhận thành công!" }, "success");
+                                //document.cookie.
+                                setTimeout(heplers.Redirect(result.returnUrl), 10 * 1000);
+                            } else {
+                                notification.show({ title: "Thông báo", message: "Có lỗi xảy ra, vui lòng thử lại sau" }, "error");
+                                btn.text("Tiến hành đặt hàng");
+                                btn.attr("disabled", false);
+                                btn.removeClass("not-active");
+                            }
+                        },
+                        error: function (error) {
+                            btn.text("Tiến hành đặt hàng");
+                            btn.attr("disabled", false);
+                            btn.removeClass("not-active");
+                        }
+                    });
+                } else {
+                    btn.attr("disabled", true);
+                    btn.addClass("not-active");
+                    $.ajax({
+                        url: "/Shopping/AddToBillWithLogin",
+                        type: "post",
+                        dataType: "json",
+                        async: true,
+                        data: {
+                            UserId: $('#userId').val(),
+                            code: $('#voucher').val()
+                        },
+                            success: function (result) {
+                            notification.show({ title: "Thông báo", message: "Đơn hàng :" + result.billCode + " đã được ghi nhận thành công!" }, "success");
+                            //document.cookie.
+                                
+                            setTimeout(heplers.Redirect(result.returnUrl), 10 * 1000);
+                        },
+                        error: function (err) {
+                            btn.text("Tiến hành đặt hàng");
+                            btn.attr("disabled", false);
+                            btn.removeClass("not-active");
+                        }
+                    });
+                }
+            } else {
+                if (!formValidation()) {
+                    btn.text("Tiến hành đặt hàng");
+                    return;
+                    
+                }
+                var p = $('#phone').val();
+                    var vnf_regex = /((0|84)+([0-9]{9})\b)/g;
+
+                    if (!vnf_regex.test(p)) {
+                        notification.show({ title: "Thông báo", message: "Số điện thoại không đúng định dạng" }, "error");
+                        btn.text("Tiến hành đặt hàng");
+                        return;
+                 }
+                var firstName = $('#f_name');
+                var lname = $("#l_name");
+                var email = $('#email');
+                var phone = $('#phone');
+                var province = $('#province').data('kendoDropDownList');
+                var district = $('#district').data('kendoDropDownList');
+                var ward = $('#ward').data('kendoDropDownList');
+                var placedetail = $('#placedetail');
+                var ordernote = $('#ordernote');
+                var voucher = $('#voucher');
+                var data = {
+                    UserId: 0,
+                    Name: firstName.val() + " " + lname.val(),
+                    Email: email.val(),
+                    PhoneNumber: phone.val(),
+                    ProvinceId: province.value(),
+                    DistrictId: district.value(),
+                    Ward: ward.value(),
+                    PlaceDetail: placedetail.val(),
+                    Note: ordernote.val(),
+                    voucher: voucher.val()
+                };
+                btn.attr("disabled", true);
+                btn.addClass("not-active");
+                $.ajax({
+                    url: "/Shopping/AddToBillWithNoLogin",
+                    type: "post",
+                    dataType: "json",
+                    data: data,
+                    async: true,
+                    success: function (result) {
+                        if (result.code === 1) {
+                                notification.show({ title: "Thông báo", message: "Đơn hàng :" + result.billCode + " đã được ghi nhận thành công!" }, "success");
+                            //document.cookie.
+                            setTimeout(heplers.Redirect(result.returnUrl), 10 * 1000);
+                        } else {
+                            notification.show({ title: "Thông báo", message: "Có lỗi xảy ra, vui lòng thử lại sau" }, "error");
+                            btn.text("Tiến hành đặt hàng");
+                            btn.attr("disabled", false);
+                            btn.removeClass("not-active");
+                        }
+                    },
+                     error: function (error) {
+                         btn.text("Tiến hành đặt hàng");
+                         btn.attr("disabled", false);
+                         btn.removeClass("not-active");
+                        }
+                    });
+
+            }
+        }
+
+        function formValidation() {
+            var result = true;
+            var allInputs = new Array();
+            allInputs = $(".billing-form-wrap :input").toArray();
+            for (var i = 0; i < allInputs.length;i++) {
+                if (allInputs[i].value === "" && allInputs[i].name !== "placedetail" && allInputs[i].name !== "ordernote") {
+                    if (allInputs[i].name === "province") {
+                        notification.show({ title: "Thông báo", message: "Vui lòng chọn tỉnh" }, "error");
+                    } else if (allInputs[i].name === "district") {
+                        notification.show({ title: "Thông báo", message: "Vui lòng chọn Quận,huyện" }, "error");
+                    } else if (allInputs[i].name === "ward") {
+                        notification.show({ title: "Thông báo", message: "Vui lòng chọn Xã,phường" }, "error");
+                    } else {
+                        notification.show({ title: "Thông báo", message:"Thông tin không được để trống" }, "error");
+                        allInputs[i].focus();
+                    }                   
+                    result = false;
+                    //return result;
+                    break;
+                                       
+                } 
+            };
+            return result;
+        }
+
+        function getVoucherValueOff() {
+
+            debugger;
+            var code = $('#voucher').val();
+            var fPrice = RemoveAllChar($('#fPrice').text(), ',');
+            if (code !== "") {
+                $.get("/Shopping/GetVoucherValue?code=" + code, function (data) {
+                    if (data.valid) {
+                        var result = parseInt(fPrice)- parseInt(fPrice) * parseInt(data.value) / 100;
+
+                        var format = numeral(result).format('0,0');
+                        $('#voucher').attr('disabled',true);
+                        $('#submitVoucher').attr("disabled", true);
+                        $('#lastPrice').text(format);
+                        var css = 'submitVoucher:hover{cursor:not-allowed}';
+                        $('#submitVoucher').attr("style", "background-color:gray; ");
+                        $('#submitVoucher').addClass("not-active");
+                        notification.show({ title: "Thông báo", message: "Đã sử dụng mã giảm giá thành công" }, "success");
+
+                    } else {
+                        $('#voucher').attr('disabled', false);
+                        $('#submitVoucher').attr("disabled", false);                       
+                        notification.show({ title: "Thông báo", message: "Voucher không khả dụng" }, "error");
+                    }
+
+                });
+            }
+                       
+        }
+        function RemoveAllChar(str, char) {
+            debugger;
+            return str.indexOf(char) != -1 ? RemoveAllChar(str.replace(char,''),char) : str;
+        }
+    </script>
+
+
+
+}
+

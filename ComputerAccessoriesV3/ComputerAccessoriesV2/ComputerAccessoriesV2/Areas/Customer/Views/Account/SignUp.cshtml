@@ -1,0 +1,107 @@
+﻿@model ComputerAccessoriesV2.ViewModels.RegisterViewModel
+@using ComputerAccessoriesV2.Extensions
+@using ComputerAccessoriesV2.Models
+@{
+    List<Provinces> provinces = new List<Provinces>();
+    Layout = "~/Views/AccountLayout/_AccountLayout.cshtml";
+}
+
+
+
+    <section class="content" style="margin-top:50px;">
+        <div class="register-box" style="width: 50%; margin: 1% auto">
+            <span id="notify"></span>
+            <div class="register-box-body">
+                <p class="login-box-msg" style="font-size:3rem;">Đăng ký thành viên mới</p>
+                <br />
+                <div class="row">
+                    <div class="col-md-6 col-sm-12">
+                        <div class="form-group has-feedback">
+                            <label>Họ và tên</label>
+                            <input type="text" id="fullname" asp-for="FullName" class="form-control" required placeholder="Họ và tên">
+                            <span class="glyphicon glyphicon-user form-control-feedback"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-12">
+                        <div class="form-group has-feedback">
+                            <label>Email</label>
+                            <input oninput="validateEmail()" type="email" id="email" asp-for="Email" class="form-control" required placeholder="Email">
+                            <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 col-sm-12">
+                        <div>
+                            <label>Tỉnh, Thành Phố</label>
+                            @*<select id="provinceSelector" asp-for="ProvinceId" asp-items="@provinces.ToSelectListItemProvince("ProvinceName",provinces.FirstOrDefault().ProvinceId)" class="form-control"></select>*@
+                            <input id="provinceSelector" class="form-control" />
+                            @*<span class="glyphicon glyphicon-envelope form-control-feedback"></span>*@
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-12">
+                        <div>
+                            <label>Huyện, Quận</label>
+                            @*<select id="districtSelector" asp-for="DistrictId" class="form-control"></select>*@
+                            <input id="districtSelector" class="form-control" />
+                            @*<span class="glyphicon glyphicon-envelope form-control-feedback"></span>*@
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 col-sm-12">
+                        <div>
+                            <label>Xã, Phường</label>
+                            @*<select id="wardSelector" asp-for="WardId" class="form-control"></select>*@
+                            <input id="wardSelector" class="form-control" />
+                            @*<span class="glyphicon glyphicon-envelope form-control-feedback"></span>*@
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-12">
+                        <div class="form-group has-feedback">
+                            <label>Số điện thoại</label>
+                            <input oninput="validatePhone()" type="tel" class="form-control" id="phonenumber" required placeholder="Nhập số điện thoại tại đây">
+                            <span class="glyphicon glyphicon-phone form-control-feedback"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12 col-sm-12">
+                        <div>
+                            <label>Số nhà, Đường</label>
+                            <input type="text" id="placeDetailText" class="form-control" placeholder="Nhập số nhà, đường">
+                            @*<span class="glyphicon glyphicon-envelope form-control-feedback"></span>*@
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <div class="form-group has-feedback">
+                    <label>Mật khẩu</label>
+                    @*<input type="password" class="form-control" id="Pwd" required placeholder="Mật khẩu" pattern=".{8,}">*@
+                    <input type="password" class="form-control" id="Pwd" required placeholder="Nhập mật khẩu" pattern=".{6,}">
+                    <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+                </div>
+                <div class="form-group has-feedback">
+                    <label>Nhập lại mật khẩu</label>
+                    <input type="password" class="form-control" id="confirmPwd" oninput="checkPwd()" required placeholder="Nhập lại mật khẩu">
+                    <span class="glyphicon glyphicon-log-in form-control-feedback"></span>
+                </div>
+                <div class="row">
+                    <div class="col-xs-7 col-md-7">
+                        <div class="checkbox icheck">
+                            <label>
+                                <input type="checkbox"> Tôi đồng ý với <a href="#">các điều khoản</a>
+                            </label>
+                        </div>
+                    </div>
+                    <!-- /.col -->
+                    <div class="col-xs-5 col-md-5">
+                        <button class="btn btn-primary btn-block btn-flat" style="width: 50%" disabled="disabled" id="submit">Đăng ký</button>
+                    </div>
+                    <!-- /.col -->
+                </div>
+                <!-- /.form-box -->
+            </div>
+        </div>
+    </section>

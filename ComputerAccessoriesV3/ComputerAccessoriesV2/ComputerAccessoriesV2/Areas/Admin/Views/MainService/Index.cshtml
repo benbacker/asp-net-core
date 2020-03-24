@@ -1,0 +1,668 @@
+﻿@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Admin/_Layout.cshtml";
+}
+
+<section class="content">
+    <div class="row">
+        <div class="col-md-12">
+            <!-- Custom Tabs -->
+            <div class="nav-tabs-custom">
+                <ul class="nav nav-tabs">
+                    <li><a id="dashboardChartTab" href="#tab_1" data-toggle="tab">Bảng điều khiển</a></li>
+                    <li><a href="#tab_2" data-toggle="tab">Hóa đơn</a></li>
+                    <li><a href="#tab_3" data-toggle="tab">Sản phẩm</a></li>
+                    <li><a href="#tab_4" data-toggle="tab">Tài khoản</a></li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane" id="tab_1">
+                        <div class="nav-tabs-custom">
+                            <ul class="nav nav-tabs">
+                                <li id="tab_sales_wrapper"><a id="saleTab" href="#tab_chartSalesWrapper" data-toggle="tab">Doanh số</a></li>
+                                <li id="tab_account_wrapper"><a href="#tab_chartAccountWrapper" data-toggle="tab">Tài khoản</a></li>
+                            </ul>
+                            <div class="tab-content">
+                                <div id="tab_chartSalesWrapper" class="tab-pane">
+                                    <div class="col">
+                                        <div class="box box-default">
+                                            <div class="box-header">
+
+                                            </div>
+
+                                            <div class="box-body">
+                                                <div class="col-md-12">
+                                                    <div class="form-group row">
+                                                        <div class="col-md-6">
+                                                            <div class="col-md-2">
+                                                                <label>Từ ngày: </label>
+                                                            </div>
+                                                            <div class="col-md-10">
+                                                                <input id="salesReportStartDatePicker" class="form-control" />
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-md-6">
+                                                            <div class="col-md-2">
+                                                                <label>Đến ngày: </label>
+                                                            </div>
+
+                                                            <div class="col-md-10">
+                                                                <input id="salesReportEndDatePicker" class="form-control" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="box-footer">
+                                                <button onclick="onFilterSalesChart()" class="btn btn-primary">Lọc</button>
+                                            </div>
+                                        </div>
+                                        <div id="salesReport"></div>
+                                    </div>
+                                </div>
+
+                                <div id="tab_chartAccountWrapper" class="tab-pane">
+                                    <div class="col">
+                                        <div class="box box-default">
+                                            <div class="box-header">
+
+                                            </div>
+
+                                            <div class="box-body">
+                                                <div class="col-md-12">
+                                                    <div class="form-group row">
+                                                        <div class="col-md-6">
+                                                            <div class="col-md-2">
+                                                                <label>Từ ngày: </label>
+                                                            </div>
+                                                            <div class="col-md-10">
+                                                                <input id="accountReportStartDatePicker" class="form-control" />
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-md-6">
+                                                            <div class="col-md-2">
+                                                                <label>Đến ngày: </label>
+                                                            </div>
+
+                                                            <div class="col-md-10">
+                                                                <input id="accountReportEndDatePicker" class="form-control" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="box-footer">
+                                                <button onclick="onFilterAccountChart()" class="btn btn-primary">Lọc</button>
+                                            </div>
+                                        </div>
+                                        <div id="accountReport"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.tab-pane -->
+                    <div class="tab-pane" id="tab_2">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="box box-default">
+                                    <div class="box-header">
+                                        <h4>Báo cáo sản lượng hóa đơn</h4>
+                                    </div>
+                                    <div class="box-body">
+                                        <div class="col-md-12">
+                                            <div class="form-group row">
+                                                <div class="col-md-4">
+                                                    <div class="col-md-2">
+                                                        <label>Từ ngày: </label>
+                                                    </div>
+                                                    <div class="col-md-10">
+                                                        <input id="fromTime" class="form-control" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="col-md-2">
+                                                        <label>Đến ngày: </label>
+                                                    </div>
+                                                    <div class="col-md-10">
+                                                        <input id="toTime" class="form-control" />
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="box-footer">
+                                        <div class="col-md-12">
+                                            <button class="btn btn-primary" onclick="FilterBill()" style="margin-left:20px;">Lọc</button>
+                                            <button class="btn btn-primary" id="exportBill">Xuất báo cáo</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div id="billGrid">
+
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.tab-pane -->
+                    <div class="tab-pane" id="tab_3">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="box box-default">
+                                    <div class="box-header">
+                                        <h4>Báo cáo sản phẩm</h4>
+                                    </div>
+                                    <div class="box-body">
+                                        <div class="col-md-12">
+                                            <div class="form-group row">
+                                                <div class="col-md-4">
+                                                    <div class="col-md-2">
+                                                        <label>Từ ngày: </label>
+                                                    </div>
+                                                    <div class="col-md-10">
+                                                        <input id="productFromTime" class="form-control" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="col-md-2">
+                                                        <label>Đến ngày: </label>
+                                                    </div>
+                                                    <div class="col-md-10">
+                                                        <input id="productToTime" class="form-control" />
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="box-footer">
+                                        <div class="col-md-12">
+                                            <button class="btn btn-primary" id="filter" style="margin-left:20px">Lọc</button>
+                                            <button class="btn btn-primary" id="exportProducts">Xuất báo cáo</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div id="productGrid">
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="tab_4">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="box box-default">
+                                    <div class="box-header">
+                                        <h4>Báo cáo tài khoản</h4>
+                                    </div>
+                                    <div class="box-body">
+                                        <div class="col-md-12">
+                                            <div class="form-group row">
+                                                <div class="col-md-6">
+                                                    <div class="col-md-2">
+                                                        <label>Từ ngày: </label>
+                                                    </div>
+                                                    <div class="col-md-10">
+                                                        <input id="accountFromTime" class="form-control" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="col-md-2">
+                                                        <label>Đến ngày: </label>
+                                                    </div>
+                                                    <div class="col-md-10">
+                                                        <input id="accountToTime" class="form-control" />
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="box-footer">
+                                        <button class="btn btn-primary" id="exportAccount">Xuất báo cáo</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div id="accountGrid">
+
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.tab-pane -->
+                </div>
+                <!-- /.tab-content -->
+            </div>
+            <!-- nav-tabs-custom -->
+        </div>
+    </div>
+</section>
+
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            $('#fromTime').datepicker();
+            $('#toTime').datepicker();
+            $('#productFromTime').datepicker();
+            $('#productToTime').datepicker();
+            $('#accountFromTime').datepicker();
+            $('#accountToTime').datepicker();
+
+            $("#dashboardChartTab").click();
+            $("#saleTab").click();
+
+            $("#billGrid").kendoGrid({
+                dataSource: {
+                    type: "json",
+                    transport: {
+                        read: {
+                            url: window.location.protocol + '//' + window.location.host + "/MainService/GetBillExport",
+                            data: function () {
+                                return {
+                                    fromTime: $('#fromTime').val(),
+                                    toTime: $("#toTime").val()
+                                }
+                            }
+                        }
+
+                    },
+                    pageSize: 20
+                },
+                height: 550,
+                groupable: true,
+                sortable: true,
+                pageable: {
+                    refresh: true,
+                    pageSizes: true,
+                    buttonCount: 5
+                },
+                columns: [{                    
+                    field: "customerName",
+                    title: "Tên khách hàng",
+                    width: 240
+                },{                    
+                    field: "customerEmail",
+                    title: "Email",
+                    width: 240
+                }, {
+                    field: "billCode",
+                    title: "Mã hóa đơn"
+                }, {
+                    field: "shippingStatus",
+                    title: "Trạng thái đơn hàng"
+                },{
+                    field: "shippingAddress",
+                    title: "Địa chỉ giao hàng"
+                },{
+                    field: "productQuantity",
+                    title: "Số lượng sản phẩm"
+                },{
+                    field: "firstPrice",
+                    title: "Giá"
+                },{
+                    field: "voucher",
+                    title: "Mã giảm giá"
+                },{
+                    field: "voucherValue",
+                    title: "Giá trị mã giảm giá(%)"
+                },{
+                    field: "lastPrice",
+                    title: "Giá sau khi giảm"
+                    }],
+                filterable: true
+            });
+
+
+            $("#productGrid").kendoGrid({
+                dataSource: {
+                    type: "json",
+                    transport: {
+                        read: {
+                            url: window.location.protocol + '//' + window.location.host + "/MainService/GetProductExport",
+                            data: function () {
+                                return {
+                                    FromTime: $('#productFromTime').val(),
+                                    ToTime: $("#productToTime").val()                                  
+                                }
+                            }
+                        }
+
+                    },
+                    pageSize: 20
+                },
+                height: 550,
+                groupable: true,
+                sortable: true,
+                pageable: {
+                    refresh: true,
+                    pageSizes: true,
+                    buttonCount: 5
+                },
+                columns: [{                    
+                    field: "productName",
+                    title: "Tên sản phẩm",
+                    width: 240
+                },{                    
+                    field: "productCode",
+                    title: "Mã sản phẩm",
+                        width: 240
+                }, {
+                    field: "createdDate",
+                    title: "Ngày tạo"
+                }, {
+                    field: "remainedProducts",
+                    title: "Số lượng còn lại"
+                },{
+                    field: "brandName",
+                    title: "Thương hiệu"
+                },{
+                    field: "categoryName",
+                    title: "Danh mục"
+                },{
+                    field: "original",
+                    title: "Xuất xứ"
+                },{
+                    field: "unitPrice",
+                    title: "Đơn giá"
+                },{
+                    field: "status",
+                    title: "Trạng thái"
+                },{
+                    field: "viewCounts",
+                    title: "Số lượt xem"
+                    
+                },{
+                    field: "reviewCounts",
+                    title: "Số lượt đánh giá",
+                    width: 150
+                    }, {
+                    field:"buyCounts",
+                    title: "Lượt mua",
+                   
+                    }],
+                filterable: true
+            });
+
+            //$("#accountGrid").kendoGrid({
+            //    dataSource: {
+            //        type: "json",
+            //        transport: {
+            //            read: {
+            //                url: window.location.protocol + '//' + window.location.host + "/MainService/GetAccountReports",
+            //                data: function () {
+            //                    return {
+            //                        fromTime: $('#accountFromTime').val(),
+            //                        toTime: $('#accountToTime').val()
+            //                    }
+            //                }
+            //            }
+
+            //        },
+            //        pageSize: 20
+            //    },
+            //    height: 550,
+            //    groupable: true,
+            //    sortable: true,
+            //    pageable: {
+            //        refresh: true,
+            //        pageSizes: true,
+            //        buttonCount: 5
+            //    },
+            //    columns: [{                    
+            //        field: "displayName",
+            //        title: "Khách hàng",
+            //        width: 240
+            //    }, {
+            //        field: "email",
+            //        title: "Email"
+            //    },{
+            //        field: "phoneNumber",
+            //        title: "Số điện thoại"
+            //    },{
+            //        field: "roleName",
+            //        title: "Vai trò"
+            //    },{
+            //        field: "createdDate",
+            //        title: "Ngày tạo tài khoản"
+            //    },{
+            //        field: "isActivated",
+            //            title: "Trạng thái",
+            //            template: "#if(isActivated==true){#<text>Đã kích hoạt</text>#}else{#<text>Khóa/Chưa kích hoạt</text>#}#"
+            //    },{
+            //        field: "address",
+            //        title: "Địa chỉ"
+            //        }],
+            //    filterable: true
+            //});
+
+        });
+
+        $('#exportBill').click(function () {
+            var fromDate = $('#fromTime');
+            var toDate = $('#toTime');
+
+            if (fromDate.val() == "") {
+                $('#noitifyHolder').data('kendoNotification').show("Vui lòng chọn ngày bắt đầu", "error");
+                return;
+            }
+            if (toDate.val() == "") {
+                $('#noitifyHolder').data('kendoNotification').show("Vui lòng chọn ngày kết thúc", "error");
+                return;
+            }
+            var url = "/Exports/ExportsBill?fromDate=" + fromDate.val() + "&toDate=" + toDate.val();
+            var win = window.open(url, "_blank");
+            win.focus;
+        });
+
+        $('#exportProducts').click(function () {
+            var fromDate = $('#productFromTime');
+            var toDate = $("#productToTime");
+            if (fromDate.val() == "") {
+                $('#noitifyHolder').data('kendoNotification').show("Vui lòng chọn ngày bắt đầu", "error");
+                return;
+            }
+            if (toDate.val() == "") {
+                $('#noitifyHolder').data('kendoNotification').show("Vui lòng chọn ngày kết thúc", "error");
+                return;
+            }
+
+            var url = "/Exports/ExportProducts?fromDate=" + fromDate.val() + "&toDate=" + toDate.val();
+            var win = window.open(url, "_blank");
+            win.focus();
+
+
+        });
+
+        $('#exportAccount').click(function () {
+            var fromDate = $('#accountFromTime');
+            var toDate = $("#accountToTime");
+            if (fromDate.val() == "") {
+                $('#noitifyHolder').data('kendoNotification').show("Vui lòng chọn ngày bắt đầu", "error");
+                return;
+            }
+            if (toDate.val() == "") {
+                $('#noitifyHolder').data('kendoNotification').show("Vui lòng chọn ngày kết thúc", "error");
+                return;
+            }
+
+            var url = "/Exports/ExportAccount?fromDate=" + fromDate.val() + "&toDate=" + toDate.val();
+            var win = window.open(url, "_blank");
+            win.focus();
+        });
+
+        $("#tab_sales_wrapper").on("click", function () {
+            loadSalesChart();
+        });
+
+        $("#tab_account_wrapper").on("click", function () {
+            loadAccountChart();
+        });
+
+        function loadAccountChart() {
+            console.log("loadAccountChart");
+            $("#accountReportStartDatePicker").datepicker();
+            $("#accountReportEndDatePicker").datepicker();
+
+            var currentDate = new Date();
+            $('#accountReportEndDatePicker').datepicker('setDate', currentDate);
+            currentDate.setDate(currentDate.getDate() - 7);
+            $('#accountReportStartDatePicker').datepicker('setDate', currentDate);
+
+            onFilterAccountChart();
+        }
+
+        function onFilterAccountChart() {
+            console.log("onFilterAccountChart");
+
+            var fromDate = $('#accountReportStartDatePicker').val();
+            var toDate = $("#accountReportEndDatePicker").val();
+            if (fromDate == "") {
+                $('#noitifyHolder').data('kendoNotification').show("Vui lòng chọn ngày bắt đầu", "error");
+                return;
+            }
+            if (toDate == "") {
+                $('#noitifyHolder').data('kendoNotification').show("Vui lòng chọn ngày kết thúc", "error");
+                return;
+            }
+
+            var dataSource = new kendo.data.DataSource({
+                transport: {
+                    read: {
+                        url: "/Admin/MainService/GetAccountReport",
+                        dataType: "json",
+                        data: function () {
+                            return {
+                                startDate: fromDate,
+                                endDate: toDate
+                            }
+                        }
+                    }
+                },
+            });
+
+
+            $("#accountReport").kendoChart({
+                title: {
+                    text: "Tài khoản đăng kí mới"
+                },
+                dataSource: dataSource,
+                series: [{
+                    type: "line",
+                    aggregate: "avg",
+                    field: "value",
+                    categoryField: "date"
+                }],
+                categoryAxis: {
+                    baseUnit: "weeks"
+                }
+            });
+        }
+
+        function loadSalesChart() {
+            console.log("loadSalesChart");
+            $("#salesReportStartDatePicker").datepicker();
+            $("#salesReportEndDatePicker").datepicker();
+
+            var currentDate = new Date();
+            $('#salesReportEndDatePicker').datepicker('setDate', currentDate);
+            currentDate.setDate(currentDate.getDate() - 7);
+            $('#salesReportStartDatePicker').datepicker('setDate', currentDate);
+
+            onFilterSalesChart();
+        }
+
+        function onFilterSalesChart() {
+            var fromDate = $('#salesReportStartDatePicker').val();
+            var toDate = $("#salesReportEndDatePicker").val();
+            if (fromDate == "") {
+                $('#noitifyHolder').data('kendoNotification').show("Vui lòng chọn ngày bắt đầu", "error");
+                return;
+            }
+            if (toDate == "") {
+                $('#noitifyHolder').data('kendoNotification').show("Vui lòng chọn ngày kết thúc", "error");
+                return;
+            }
+
+            var dataSource = new kendo.data.DataSource({
+                transport: {
+                    read: {
+                        url: "/Admin/MainService/GetSalesReport",
+                        dataType: "json",
+                        data: function () {
+                            return {
+                                startDate: fromDate,
+                                endDate: toDate
+                            }
+                        }
+                    }
+                },
+            });
+
+            $('#filter').click(function () {
+                $('#productGrid').data('kendoGrid').dataSource.read();
+            });
+
+            $("#salesReport").kendoChart({
+                title: {
+                    text: "Biểu đồ doanh số"
+                },
+                dataSource: dataSource,
+                series:
+                    [{
+                        type: "line",
+                        field: "value",
+                        categoryField: "date",
+                        axis: "count"
+                    },
+                    {
+                        type: "line",
+                        field: "totalRevenue",
+                        categoryField: "date",
+                        axis: "revenue"
+                    }],
+                valueAxes:
+                    [{
+                        name: "revenue",
+                        color: "#73c100",
+                        title: { text: "Tổng giá trị đơn hàng (nghìn đồng)" }
+                    },
+                    {
+                        name: "count",
+                        color: "#007eff",
+                        title: { text: "Số lượng đơn hàng" }
+                    }],
+                categoryAxis: {
+                    // Align the first two value axes to the left
+                    // and the last two to the right.
+                    //
+                    // Right alignment is done by specifying a
+                    // crossing value greater than or equal to
+                    // the number of categories.
+                    axisCrossingValues: [10000, 0]
+                },
+                tooltip: {
+                    visible: true,
+                    template: "#= date #: #= value # : #= totalRevenue #"
+                }
+            });
+        }
+
+        function FilterBill() {
+            $('#billGrid').data('kendoGrid').dataSource.read();
+        }
+    </script>
+
+}

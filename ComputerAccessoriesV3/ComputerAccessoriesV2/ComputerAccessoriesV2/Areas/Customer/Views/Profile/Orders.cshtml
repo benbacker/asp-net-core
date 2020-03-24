@@ -1,0 +1,54 @@
+﻿@{
+    int userId = ViewBag.userId;
+}
+
+<div id="listOrders"></div>
+
+
+<script>
+    $(document).ready(() => {
+        $("#listOrders").kendoGrid({
+            dataSource: {
+                type: 'json',
+                transport: {
+                    read: window.location.protocol + '//' + window.location.host + "/Customer/Profile/GetUserListOrders?userId=" + @userId
+                    }
+            },
+            messages: {
+                itemsPerPage: "dòng mỗi trang"
+            },
+            groupable: false,
+            sortable: true,
+            resizable: true,
+            columns: [{
+                field: "billId",
+                title: "ID"
+            }, {
+                field: "billName",
+                title: "Mã đơn hàng"
+            }, {
+                field: "totalPrice",
+                title: "Tổng giá tiền"
+            }, {
+                field: "createDate",
+                title: "Ngày khởi tạo"
+            },{
+                field: "voucher",
+                title: "Voucher"
+            },{
+                field: "lastPrice",
+                title: "Giá cuối"
+            },{
+                field: "note",
+                title: "Ghi chú"
+            }, {
+                title: "Xem chi tiết",
+                template: "<a class ='btn btn-default' style='border:none; background:transparent' onclick='return GoOrderDetail(#: billId#)' title='Xem chi tiết'><span><i class='fa fa-search'></i></span></a>"
+            }]
+        });
+    });
+
+    function GoOrderDetail(billId) {
+        window.location.href = window.location.protocol + '//' + window.location.host + "/Customer/Shopping/OrderInfo?id=" + billId;
+    }
+</script>

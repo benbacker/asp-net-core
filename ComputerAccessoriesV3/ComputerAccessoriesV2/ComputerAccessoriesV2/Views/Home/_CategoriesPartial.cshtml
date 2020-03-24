@@ -1,0 +1,70 @@
+﻿@model List<ComputerAccessoriesV2.ViewModels.CategoryHomeModel>
+<div class="category-toggle">
+        Danh mục
+        <div class="cat-icon">
+            <i class="fa fa-angle-down"></i>
+        </div>
+    </div>
+<nav class="category-menu hm-1">
+    <ul>
+        @foreach (var category in Model)
+        {
+
+            @if (category.ListChildrenNode != null && category.ListChildrenNode.Count > 0)
+            {
+                <li class="menu-item-has-children">
+
+                    <a asp-controller="Shopping" asp-action="ProductListFilter" asp-route-categoryId="@category.MainCategory.Id">
+                        <i class="fa fa-desktop"></i>
+                        @category.MainCategory.CategoryName
+                    </a>
+                    <ul class="category-mega-menu">
+                        @foreach (var category1 in category.ListChildrenNode)
+                        {
+
+
+                            @if (category.ListChildrenNode != null && category.ListChildrenNode.Count > 0)
+                            {
+                                <li class="menu-item-has-children">
+                                    <a asp-controller="Shopping" asp-action="ProductListFilter" asp-route-categoryId="@category1.MainCategory.Id">@category1.MainCategory.CategoryName</a>
+                                    <ul>
+                                        @foreach (var category2 in category1.ListChildrenNode)
+                                        {
+
+                                            <li><a asp-controller="Shopping" asp-action="ProductListFilter" asp-route-categoryId="@category2.MainCategory.Id">@category2.MainCategory.CategoryName</a></li>
+
+                                        }
+                                    </ul>
+                                </li>
+                            }
+                            else
+                            {
+                                <li class="menu-item-has-children">
+                                    <a asp-controller="Shopping" asp-action="ProductListFilter" asp-route-categoryId="@category1.MainCategory.Id">@category1.MainCategory.CategoryName</a>
+
+                                </li>
+                            }
+
+
+
+                        }
+                    </ul>
+                </li>
+
+            }
+            else
+            {
+                <li>
+                    <a asp-controller="Shopping" asp-action="ProductListFilter" asp-route-categoryId="@category.MainCategory.Id">
+                        <i class="fa fa-desktop"></i>
+                        @category.MainCategory.CategoryName
+                    </a>
+                </li>
+            }
+        }
+    </ul>
+</nav>
+
+@*<script>
+        $('.category-menu').hide();
+    </script>*@

@@ -1,0 +1,184 @@
+﻿@{
+    int userId = ViewBag.userId;
+}
+
+<div>
+    <div id="listShipperOrders"></div>
+
+    <div id="shipperBillDetail" class="modal fade" role="dialog" style="margin-top: 100px;">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div id="modalContent" class="modal-content">
+                <div class="modal-header" style="background-color:#6b7f9a">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title"><b>Chi tiết đơn hàng</b></h4>
+                </div>
+
+                <div class="modal-body">
+                    <div class="form-group row">
+                        <label>Danh sách sản phẩm</label>
+                    </div>
+                    <div class="form-group row" id="listBillProduct" />
+
+                    <div>
+                        <div class="form-group row">
+                            <label>Trạng thái đơn hàng</label>
+                        </div>
+                        <input class="form-group row" id="billStatus" />
+                    </div>
+
+                    <div>
+                        <div class="form-group row">
+                            <label>Ghi chú</label>
+                        </div>
+                        <input class="form-group row" id="currentChangeNote" />
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button onclick="changeShipperBillStatus()" type="button" class="btn btn-default" id="btn-insertProduct"><span><i class="fa fa-check"></i></span> Lưu</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<script>
+
+    var currentBillId = null;
+    var notification = $('#kendoNoti').data('kendoNotification');
+
+    $(document).ready(() => {
+        $("#listShipperOrders").kendoGrid({
+            dataSource: {
+                type: 'json',
+                transport: {
+                    read: window.location.protocol + '//' + window.location.host + "/Customer/Profile/GetListOrderAvailable?userId=" + @userId
+                    }
+            },
+            messages: {
+                itemsPerPage: "dòng mỗi trang"
+            },
+            groupable: false,
+            sortable: true,
+            resizable: true,
+            columns: [
+                {
+                    field: "billId",
+                    title: "ID"
+                }, {
+                    field: "billName",
+                    title: "Mã đơn hàng"
+                }, {
+                    field: "shippingAddress",
+                    title: "Địa chỉ giao hàng"
+                }, {
+                    field: "lastPrice",
+                    title: "Giá cuối"
+                }, {
+                    field: "codeName",
+                    title: "Trạng thái"
+                }, {
+                    field: "note",
+                    title: "Ghi chú"
+                }, {
+                    title: "Xem chi tiết",
+                    template: "<a class ='btn btn-default' style='border:none; background:transparent' onclick='GoShipperOrderDetail(#: billId#, #: statusCode#)' title='Xem chi tiết'><span><i class='fa fa-search'></i></span></a>"
+                }
+            ]
+        });
+    });
+
+    function GoShipperOrderDetail(billId, statusCode) {
+        $('#shipperBillDetail').modal('show');
+
+        $("#listBillProduct").empty();
+        $('#billStatus').empty();
+
+        loadBillDetailData(billId, statusCode);
+    }
+
+    function changeShipperBillStatus() {
+        var billStatus = $('#billStatus').data('kendoDropDownList').value();
+        var note = $('#currentChangeNote').val();
+
+        var data = {
+            status: billStatus,
+            billId: currentBillId,
+            currentChangeNote: note
+        };
+
+        $.ajax({
+            url: "/Customer/Profile/ChangeShipperBillStatus",
+            type: "post",
+            data: data,
+            dataType: "json",
+            data: data,
+            success: function (success) {
+                notification.show({ title: "Thông báo", message: success.notify }, "success");
+                $('#shipperBillDetail').modal('hide');
+                $("#listShipperOrders").data("kendoGrid").dataSource.read();
+            },
+            error: function (err) {
+                notification.show({ title: "Thông báo", message: err.notify }, "error");
+                console.log(err);
+            }
+        });
+    }
+
+    function loadBillDetailData(billId, status) {
+
+        console.log("loadBillDetailData: " + billId + " - " + status);
+        currentBillId = billId;
+
+        $(document).ready(() => {
+            $("#listBillProduct").kendoGrid({
+                dataSource: {
+                    type: 'json',
+                    transport: {
+                        read: window.location.protocol + '//' + window.location.host + "/Customer/Profile/GetShipperBillDetail?billId=" + billId
+                    }
+                },
+                groupable: false,
+                sortable: true,
+                resizable: true,
+                columns: [
+                    {
+                        field: "id",
+                        title: "Id"
+                    }, {
+                        field: "productName",
+                        title: "Tên sản phẩm"
+                    }, {
+                        field: "quantity",
+                        title: "Số lượng"
+                    }, {
+                        field: "lastPrice",
+                        title: "Giá"
+                    }]
+            });
+
+            $('#billStatus').kendoDropDownList({
+                dataTextField: "codeName",
+                dataValueField: "id",
+                dataSource: {
+                    type: 'json',
+                    serverFiltering: true,
+                    transport: {
+                        read: {
+                            url: window.location.protocol + '//' + window.location.host + "/Customer/Profile/GetBillStatus"
+                        },
+                        requestEnd: function (e) {
+                           
+                        },
+                    }
+                },
+                value: status
+            });
+        });
+    }
+</script>

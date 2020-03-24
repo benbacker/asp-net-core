@@ -1,0 +1,90 @@
+﻿@model List<ComputerAccessoriesV2.ViewModels.CategoryViewModel>
+@{
+    ViewData["Title"] = "Category";
+    Layout = "~/Views/Admin/_Layout.cshtml";
+}
+
+<link rel="stylesheet" href="~/font-awesome/font-awesome/css/font-awesome.css" />
+    
+    <div class="page-header">
+        <div class="row">
+            <div class="col-lg-10">
+                <h3>Danh mục sản phẩm</h3>
+            </div>
+            <div class="col-lg-1">
+                @*<a class="btn btn-default" asp-area="Admin" asp-controller="MainService" asp-action="CreateNewCategory" ><span><i class="fa fa-plus"></i></span> Thêm danh mục</a>*@
+                <a class="btn btn-default" href="/Admin/Mainservice/CreateNewCategory"><span><i class="fa fa-plus"></i></span> Thêm danh mục</a>
+            </div>
+        </div>
+    </div>
+    <br />
+
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+                <div class="box-header">
+                    <h3 class="box-title">Hover Data Table</h3>
+                </div>
+                <!-- /.box-header -->
+                <div class="box-body">
+                    <div id="CategoryGrid"></div>
+                </div>
+                <!-- /.box-body -->
+            </div>
+        </div>
+
+    </div>
+
+@section Scripts{
+    <script>
+        var helpers = HelperSDK.Helpers;
+        $(document).ready(() => {
+            $("#CategoryGrid").kendoGrid({
+                dataSource: {
+                    type: "json",
+                    transport: {
+                        read: helpers.GetJsonSource("MainService", "GetCategories") // GetJsonSource([controller]/[actionName])
+                    },
+                    pageSize: 20
+                },
+                height: 550,
+                groupable: true,
+                sortable: true,
+                pageable: {
+                    refresh: true,
+                    pageSizes: true,
+                    buttonCount: 5
+                },
+                columns: [{                    
+                    field: "categoryName",
+                    title: "Tên danh mục",
+                    width: 240
+                },{                    
+                    field: "parentName",
+                    title: "Danh mục cha"
+                },{
+                    field: "status",
+                    title: "Trạng thái",
+                    template:"#if(data.status == false){#<text>Ẩn</text>#}else{#<text>Hiển thị</text>#}#"
+                },{
+                    field: "createdDate",
+                    title: "Ngày tạo",
+                    format: "{0:dd-MM-yyyy}",
+                    width: 150
+                },{
+                    field: "modifiedDate",
+                    title: "Cập nhật lần cuối",
+                    format: "{0:dd-MM-yyyy}",
+                    width: 150
+                },{
+                        title: "Thao tác",
+                    template:"<a class='btn btn-default' onclick='EditCategory(#=data.id#)'  title='Chỉnh sửa'  style='border:none;background:transparent'><span><i class='fa fa-pencil'></i></span></a> <a class='btn btn-default' title='Ẩn' onclick='return Disabled(#:data.id#)' style='border:none;background:transparent'><span><i class='fa fa-remove'></i></span></a>",
+                    width: 150
+                }]
+            });
+        })
+        function EditCategory(id) {
+            helpers.Redirect("/Admin/MainService/EditCategory?id=" + id);
+        }
+    </script>
+ }

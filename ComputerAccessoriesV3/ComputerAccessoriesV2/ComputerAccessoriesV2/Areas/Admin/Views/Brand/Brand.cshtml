@@ -1,0 +1,208 @@
+﻿@model List<ComputerAccessoriesV2.Models.Brand>
+@{
+    ViewData["Title"] = "Branch";
+    Layout = "~/Views/Admin/_Layout.cshtml";
+}
+
+<link rel="stylesheet" href="~/font-awesome/font-awesome/css/font-awesome.css" />
+
+
+
+<section class="content">
+    <div class="page-header">
+        <div class="row">
+            <div class="col-lg-10">
+                <h3>Danh mục brand</h3>
+            </div>
+            <div class="col-lg-1">
+                <a class="btn btn-default" asp-area="Admin" asp-controller="Brand" asp-action="CreateNewBrand"><span><i class="fa fa-plus"></i></span> Thêm thương hiệu mới</a>
+            </div>
+        </div>
+    </div>
+    <div class="box box-default">
+        <div class="box-header with-border">
+            <h3 class="box-title">Lọc</h3>
+
+            <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-remove"></i></button>
+            </div>
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body" style="">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>Trạng thái</label>
+                        @*<select class="form-control select2 select2-hidden-accessible" style="width: 100%;" tabindex="-1" aria-hidden="true" asp-items="@categories.ToSelectListItem("CategoryName",categories.FirstOrDefault().Id)" id="CategoryId"></select>*@
+                        <input id="status" class="form-control" />
+                    </div>
+                </div>
+                <!-- /.col -->
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>Từ ngày</label>
+                        <div class="input-group date">
+                            <div class="input-group-addon">
+                                <i class="fa fa-calendar"></i>
+                            </div>
+                            <input type="text" @*asp-for="CreatedDate"*@ class="form-control pull-right" id="datepicker1">
+                        </div>
+                    </div>
+                    <!-- /.form-group -->
+                    <!-- /.form-group -->
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>Đến ngày</label>
+                        <div class="input-group date">
+                            <div class="input-group-addon">
+                                <i class="fa fa-calendar"></i>
+                            </div>
+                            <input type="text" @*asp-for="CreatedDate"*@ class="form-control pull-right" id="datepicker2">
+                        </div>
+                    </div>
+                    <!-- /.form-group -->
+                    <!-- /.form-group -->
+                </div>
+
+                <!-- /.col -->
+            </div>
+            <!-- /.row -->
+        </div>
+        <div class="box-footer">
+            <div class="row">
+                <div class="col-lg-4">
+                    <a class="btn btn-success" onclick="Filter()">Lọc</a>
+                </div>
+            </div>
+        </div>
+        <!-- /.box-body -->
+    </div>
+
+
+
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+                <div class="box-header">
+                    <h3 class="box-title">Danh sách</h3>
+                </div>
+                <!-- /.box-header -->
+                <div class="box-body">
+                    <div id="BrandId">
+
+                    </div>
+                </div>
+                <!-- /.box-body -->
+            </div>
+        </div>
+
+    </div>
+</section>
+
+
+@section Scripts{
+
+    <script type="text/javascript">
+        var helpers = window.HelperSDK.Helpers;
+        $(document).ready(() => {
+
+
+            var data = [
+                {
+                    name: "Ẩn",
+                    id: "0"
+                },
+                {
+                    name: "Hiển thị",
+                    id: "1"
+                }
+            ];
+
+            $('#status').kendoDropDownList({
+                optionLabel: "--Chọn trạng thái--",
+                dataTextField: "name",
+                dataValueField: "id",
+                dataSource: data
+            });
+
+            $('#datepicker1').datepicker();
+            $('#datepicker2').datepicker();
+            $("#BrandId").kendoGrid({
+                dataSource: {
+                    type: "json",
+                    transport: {
+                        read: window.location.protocol + "//" + window.location.host+"/Brand/GetBrand"
+                    },
+                    pageSize: 20
+                },
+                height: 550,
+                groupable: true,
+                sortable: true,
+                pageable: {
+                    refresh: true,
+                    pageSizes: true,
+                    buttonCount: 5
+                },
+                columns: [{
+                    field: "brandName",
+                    title: "Tên thương hiệu",
+                    width: 240
+                }, {
+                    field: "logo",
+                    title: "Logo",
+                        template: "<img src='#=logo#' style='border-radius:50%; width:20%' alt='#=logo#'>",
+                        filterable: false
+                }, {
+                    field: "status",
+                    title: "Trạng thái",
+                        template: "#if(data.status == false){#<text>Ẩn</text>#}else{#<text>Hiển thị</text>#}#",
+                    filterable: false
+                }, {
+                    field: "createdDate",
+                    title: "Ngày tạo",
+                    format: "{0:dd-MM-yyyy}",
+                        width: 150,
+                    filterable: false
+                }, {
+                    field: "modifiedDate",
+                    title: "Cập nhật lần cuối",
+                    format: "{0:dd-MM-yyyy}",
+                        width: 150,
+                    filterable: false
+                }, {
+                    title: "Thao tác",
+                    template: "<a class='btn btn-default'  href='/Admin/Brand/EditBrand?id=#=data.id#'  title='Chỉnh sửa'  style='border:none;background:transparent'><span><i class='fa fa-pencil'></i></span></a> <a class='btn btn-default' title='Ẩn' onclick='return Disabled(#=data.id#)' style='border:none;background:transparent'><span><i class='fa fa-remove'></i></span></a>",
+                    width: 150
+                    }],
+                filterable: true
+            });
+        });
+        function Filter() {
+            debugger;
+            var from = $('#datepicker1').val();
+            var to = $('#datepicker2').val();
+            var gird = $('#BrandId').data('kendoGrid');
+            var stt = $('#status').data('kendoDropDownList').value();
+            var data = {
+                fromTime: from,
+                toTime: to,
+                status: $('#status').data('kendoDropDownList').value()
+            }
+            if (stt == null) {
+                if (from == "") {
+                    $('#kendoNoti').data('kendoNotification').show({ title: "Thông báo", message: "Vui lòng chọn ngày bắt đầu" }, "success");
+                    return;
+                } else {
+                    gird.dataSource.read(data);
+                }
+            } else {
+                gird.dataSource.read(data);
+            }
+            
+        }
+    </script>
+
+}
+

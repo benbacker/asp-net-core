@@ -1,0 +1,61 @@
+﻿@model List<ComputerAccessoriesV2.ViewModels.ProductGridModel>
+
+
+
+<div class="related-products-area mt-34">
+    <div class="section-title mb-30">
+        <div class="title-icon">
+            <i class="fa fa-desktop"></i>
+        </div>
+        <h3>Sản phẩm liên quan</h3>
+    </div> <!-- section title end -->
+    <!-- featured category start -->
+    <div class="featured-carousel-active slick-padding slick-arrow-style">
+        @foreach (var item in Model)
+        {
+            <div class="product-item fix">
+                <div class="product-thumb">
+                    <a asp-controller="ProductHome" asp-action="ProductDetails" asp-route-productId="@item.Id">
+                        <img src="@item.Thumnail" class="img-pri" alt="">
+                        <img src="@item.Thumnail2" class="img-sec" alt="">
+                    </a>
+                    <div class="product-label">
+                        <span>hot</span>
+                    </div>
+                    <div class="product-action-link">
+                        <a href="javascript:void(0)" onclick="return QuickView(@item.Id)" title="Xem chi tiết"> <span data-toggle="tooltip" data-placement="left" title="Xem nhanh"><i class="fa fa-search"></i></span> </a>
+                        <a href="javascript:void(0)" data-toggle="tooltip" onclick="return AddToCart(@item.Id,1)" data-placement="left" title="Thêm vào giỏ"><i class="fa fa-shopping-cart"></i></a>
+                    </div>
+                </div>
+                <div class="product-content">
+                    <h4><a asp-controller="ProductHome" asp-action="ProductDetails" asp-route-productId="@item.Id">@item.ProductName</a></h4>
+                    <div class="pricebox">
+                        @if (!String.IsNullOrEmpty(item.PromotionPrice))
+                        {
+                            <span class="regular-price">đ @item.PromotionPrice </span>
+                            <span class="old-price" style="color:red"><del>@item.OriginalPrice</del></span>
+                        }
+                        else
+                        {
+                            <span class="regular-price">đ @item.OriginalPrice</span>
+                        }
+                    <div class="ratings">
+                        @for (int i = 1; i <= item.ReviewStarPoint; i++)
+                        {
+                            <span class="good"><i class="fa fa-star"></i></span>
+                            
+                        }
+                        <div class="pro-review">
+                            <span>@item.ReviewCount đánh giá</span>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        }
+        
+
+    </div>
+    <!-- featured category end -->
+</div>
+<!-- related products area end -->

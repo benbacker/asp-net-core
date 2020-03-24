@@ -1,0 +1,70 @@
+﻿@model ComputerAccessoriesV2.Data.MyUsers
+@using ComputerAccessoriesV2.Data
+
+<div class="account-details-form">
+
+    <div class="col-lg-4">
+        <span id="notify"></span>
+    </div>
+
+    <div class="single-input-item">
+        <label for="display-name" class="required">Tên hiển thị</label>
+        <input type="text" id="display-name" placeholder="Tên hiển thị" asp-for="DisplayName" />
+    </div>
+    <div class="single-input-item">
+        <label for="display-name" class="required">Số điện thoại</label>
+        <input type="number" id="phoneNumber" placeholder="Số điện thoại" asp-for="PhoneNumber" />
+    </div>
+    <div class="single-input-item">
+        <label for="email" class="required">Địa chỉ Email</label>
+        <input disabled="disabled" type="email" id="email" placeholder="Địa chỉ Email" asp-for="Email" />
+    </div>
+    <div class="single-input-item">
+        <label for="Created Date" class="required">Ngày khởi tạo</label>
+        <input disabled="disabled" type="datetime" id="createdDate" placeholder="Ngày khởi tạo" asp-for="CreatedDate" />
+    </div>
+    <div class="single-input-item">
+        <button onclick="onChangeProfileInfo()" class="check-btn sqr-btn ">Lưu thay đổi </button>
+    </div>
+</div>
+
+<script>
+    $(document).ready(() => {
+        notification = $("#notify").kendoNotification({
+                position: {
+                    top:170
+                },
+                templates: [{
+                    type: "warning",
+                    template: "<div class='text-danger'><text style='font-size:14px'>#= content #</text></div>"
+                }, {
+                    type: "success",
+                    template: "<div class='text-success'><text style='font-size:14px'>#= content #</text></div>"
+                    }]
+            }).data("kendoNotification");    
+    });
+
+    function onChangeProfileInfo() {
+        var displayName = document.getElementById("display-name").value;
+        var phoneNumber = document.getElementById("phoneNumber").value;
+
+        var data = {
+            UserName: displayName,
+            PhoneNumber: phoneNumber
+        }
+
+        $.ajax({
+            url: "/Profile/ChangeProfileInfo",
+            type: "post",
+            dataType: "json",
+            data: data,
+            success: function (success) {
+                notification.show("Cập nhật thông tin thành công", "success");
+            },
+            error: function (err) {
+                notification.show("Cập nhật thông tin thất bại", "warning");
+            }
+        });
+    }
+
+</script>
